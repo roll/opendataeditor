@@ -24,6 +24,7 @@
   },
   "scripts": {
     "build": "electron-vite build",
+    "dist": "electron-builder",
     "coverage": "sensible-browser coverage/index.html",
     "format": "prettier --write \"client/**/*.ts*\" && eslint --fix \"client/**/*.ts*\"",
     "lint": "prettier --check \"client/**/*.ts*\" && eslint \"client/**/*.ts*\"",

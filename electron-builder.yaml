@@ -6,7 +6,7 @@ artifactName: opendataeditor-${os}-${version}.${ext}
 
 publish:
   provider: github
-  owner: okfn
+  owner: roll
 files:
   - 'build/client/**/*'
   - 'build/desktop/**/*'

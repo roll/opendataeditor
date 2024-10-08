@@ -1,4 +1,4 @@
-.PHONY: all build client dist docs format install lint preview release server start test type version
+.PHONY: all build client docs format install lint preview release server start test type version
 
 
 VERSION := $(shell node -p -e "require('./package.json').version")
@@ -14,10 +14,6 @@ build:
 ## Runs the React client in isolation (:8080)
 client:
 	npm run start
-
-## Runs electron-builder to package and build a ready for distribution app.
-dist:
-	npm run dist
 
 ## Runs Astro dev server to serve documentation.
 docs:
@@ -42,12 +38,9 @@ lint:
 preview:
 	npm run preview
 
+## Runs electron-builder to package and build a ready for distribution app.
 release:
-	git checkout main && git pull origin && git fetch -p
-	@git log --pretty=format:"%C(yellow)%h%Creset %s%Cgreen%d" --reverse -20
-	@echo "\nReleasing v$(VERSION) in 10 seconds. Press <CTRL+C> to abort\n" && sleep 10
-	make test && git tag -a v$(VERSION) -m 'v$(VERSION)'
-	git push --follow-tags --no-verify
+	npm run release
 
 ## Runs the FastAPI server in isolation (:4040).
 server:

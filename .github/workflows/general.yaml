@@ -11,7 +11,8 @@ on:
       - main
 
 jobs:
-  # Test
+
+  # Unit Testing
 
   test:
     strategy:
@@ -36,9 +37,11 @@ jobs:
       - name: Test software
         run: make test
 
-  # End to End testing
+  # End to End Testing
+
   # It is powered by WebdriverIO, it requires an application binary path in our dist folder.
   # See wdio.conf.ts capabilities attribute for more info.
+
   test-e2e:
     runs-on: ubuntu-latest
     steps:
@@ -72,56 +75,23 @@ jobs:
           uses: coactions/setup-xvfb@v1
           with:
             run: npm run wdio
-  # Build
+
+  # Releasing
+
+  # For every merged pull request it creates or updates a draft release
+  # with software builds attached.
+
   # For GNU/Linux we need to build our application in the oldest version we want to support.
   # https://pyinstaller.org/en/stable/usage.html?highlight=glibc#making-gnu-linux-apps-forward-compatible
-  # 
+
   # The reason we chose macos-13 as the minimum version:
   # https://forums.developer.apple.com/forums/thread/739988
-  # "macOS 14 introduced a new container data protection feature. To learn more about that, 
-  # see the link in Trusted Execution Resources.The solution here is to sign your code with a stable signing identity. 
+  # "macOS 14 introduced a new container data protection feature. To learn more about that,
+  # see the link in Trusted Execution Resources.The solution here is to sign your code with a stable signing identity.
   # For day-to-day development, that should be your Apple Development signing identity."
-  build:
-    strategy:
-      matrix:
-        os: [ubuntu-20.04, macos-13, windows-latest]
-    runs-on: ${{ matrix.os }}
-    needs: [test, test-e2e]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - name: Install Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - name: Prepare environment
-        run: pip3 install hatch
-      - name: Install dependencies
-        run: make install
-      - name: Build software
-        run: make build
-      - name: Dist software
-        run: make dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Archive build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: distribution-files-${{ matrix.os }}
-          path: |
-            dist/*.deb
-            dist/*.exe
-            dist/*.dmg
-          retention-days: 14
-
-  # Release
 
   release:
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+    if: github.event_name == 'push'
     strategy:
       matrix:
         os: [ubuntu-20.04, macos-13, windows-latest]
@@ -145,6 +115,6 @@ jobs:
       - name: Build software
         run: make build
       - name: Dist software
-        run: make dist
+        run: make release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

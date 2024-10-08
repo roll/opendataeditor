@@ -44,7 +44,7 @@ preview:
 
 ## Runs electron-builder to release the app.
 release:
-	npm run realease
+	npm run release
 
 ## Runs the FastAPI server in isolation (:4040).
 server:
